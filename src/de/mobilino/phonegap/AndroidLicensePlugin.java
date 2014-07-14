@@ -34,22 +34,17 @@ public class AndroidLicensePlugin extends CordovaPlugin {
             return true;
         }
         return false;  // Returning false results in a "MethodNotFound" error.
-
 	}
 	
 	private void startCheck() {
 		Context context=this.cordova.getActivity().getApplicationContext();
 		
-        // Try to use more data here. ANDROID_ID is a single point of attack.
-        String deviceId = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
-
         // Library calls this when it's done.
         mLicenseCheckerCallback = new MyLicenseCheckerCallback();
+        
         // Construct the LicenseChecker with a policy.
-        mChecker = new LicenseChecker(
-        		context, null, null);
+        mChecker = new LicenseChecker(context, null, null);
         doCheck();
-
 	}
 	
 	private void doCheck() {
@@ -67,17 +62,21 @@ public class AndroidLicensePlugin extends CordovaPlugin {
 	    		jo.put("signature", signature);
 		    	callbackContext.success(jo);
 			} catch (JSONException e) {
-		    	callbackContext.success("error building JSONObject");
+		    	callbackContext.error("error building JSONObject for rawData");
 			}
         }
     	
         public void allow(int policyReason) {
-
-	    	callbackContext.success("sccess: " + policyReason );
+    		JSONObject jo = new JSONObject();
+        	try {
+				jo.put("responseCode", policyReason);
+		    	callbackContext.success(jo);
+			} catch (JSONException e) {
+		    	callbackContext.error("error building JSONObject for allow (policyReason " + policyReason + ")");
+			}
         }
 
         public void dontAllow(int policyReason) {
-
 	    	callbackContext.error("do not allow: " + policyReason );
         }
 
