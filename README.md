@@ -26,9 +26,9 @@ In your onDeviceReady you may start the license check with the following code.
 
 ```js
 AndroidLicensePlugin.check(
-                function(data) { alert( JSON.stringify(data));},
-                function(errorString) { alert("error: " + errorString);}
-                );
+        function(data) { alert( JSON.stringify(data));},
+        function(errorString) { alert("error: " + errorString);}
+        );
 ```
 
 ## return values
