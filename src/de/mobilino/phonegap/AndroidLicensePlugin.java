@@ -17,69 +17,68 @@ import com.google.android.vending.licensing.LicenseCheckerCallback;
  *
  */
 public class AndroidLicensePlugin extends CordovaPlugin {
-	public CallbackContext callbackContext;
+    public CallbackContext callbackContext;
 
 
     private LicenseCheckerCallback mLicenseCheckerCallback;
     private LicenseChecker mChecker;
     
     
-	@Override
-	public boolean execute(String action, JSONArray args,
-			CallbackContext callbackContext) throws JSONException {
-		this.callbackContext = callbackContext;
-		if ("check".equals(action)) {
+    @Override
+    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+        this.callbackContext = callbackContext;
+        if ("check".equals(action)) {
             //callbackContext.success("hi ho");
-			startCheck();
+            startCheck();
             return true;
         }
         return false;  // Returning false results in a "MethodNotFound" error.
-	}
-	
-	private void startCheck() {
-		Context context=this.cordova.getActivity().getApplicationContext();
-		
+    }
+    
+    private void startCheck() {
+        Context context=this.cordova.getActivity().getApplicationContext();
+        
         // Library calls this when it's done.
         mLicenseCheckerCallback = new MyLicenseCheckerCallback();
         
         // Construct the LicenseChecker with a policy.
         mChecker = new LicenseChecker(context, null, null);
         doCheck();
-	}
-	
-	private void doCheck() {
+    }
+    
+    private void doCheck() {
         mChecker.checkAccess(mLicenseCheckerCallback);
     }
 
 
     public class MyLicenseCheckerCallback implements LicenseCheckerCallback {
-    	
-    	public void rawData(final int responseCode, final String signedData, final String signature) {
-    		JSONObject jo = new JSONObject();
-    		try {
-				jo.put("responseCode", responseCode);
-	    		jo.put("signedData", signedData);
-	    		jo.put("signature", signature);
-		    	callbackContext.success(jo);
-			} catch (JSONException e) {
-		    	callbackContext.error("error building JSONObject for rawData");
-			}
+        
+        public void rawData(final int responseCode, final String signedData, final String signature) {
+            JSONObject jo = new JSONObject();
+            try {
+                jo.put("responseCode", responseCode);
+                jo.put("signedData", signedData);
+                jo.put("signature", signature);
+                callbackContext.success(jo);
+            } catch (JSONException e) {
+                callbackContext.error("error building JSONObject for rawData");
+            }
         }
-    	
-    	// this function is never called 
-    	public void allow(int policyReason) {
-	    	callbackContext.error("this should never happen; allow, policyReason: " + policyReason );
+        
+        // this function is never called 
+        public void allow(int policyReason) {
+            callbackContext.error("this should never happen; allow, policyReason: " + policyReason );
         }
 
-    	// this function is never called 
+        // this function is never called 
         public void dontAllow(int policyReason) {
-	    	callbackContext.error("this should never happen; dontAllow, policyReason: " + policyReason );
+            callbackContext.error("this should never happen; dontAllow, policyReason: " + policyReason );
         }
 
         public void applicationError(int errorCode) {
-	    	callbackContext.error("applicationError, errorCode: " + errorCode );
+            callbackContext.error("applicationError, errorCode: " + errorCode );
         }
     }
 
-	
+    
 }
