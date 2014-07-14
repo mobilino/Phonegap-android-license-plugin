@@ -2,7 +2,7 @@
 
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
            id="de.mobilino.phonegap.AndroidLicensePlugin"
-      version="0.1.0">
+      version="1.0.0">
     <name>AndroidLicensePlugin</name>
     <description>android phonegap plugin for server based license checking </description>
     <license>MIT</license>
@@ -13,6 +13,10 @@
         <clobbers target="window.AndroidLicensePlugin" />
     </js-module>
 
+    <engines>
+      <engine name="cordova" version=">=3.0.0" />
+    </engines>
+    
     <!-- android -->
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">

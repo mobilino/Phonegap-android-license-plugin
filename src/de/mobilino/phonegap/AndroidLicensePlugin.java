@@ -66,22 +66,18 @@ public class AndroidLicensePlugin extends CordovaPlugin {
 			}
         }
     	
-        public void allow(int policyReason) {
-    		JSONObject jo = new JSONObject();
-        	try {
-				jo.put("responseCode", policyReason);
-		    	callbackContext.success(jo);
-			} catch (JSONException e) {
-		    	callbackContext.error("error building JSONObject for allow (policyReason " + policyReason + ")");
-			}
+    	// this function is never called 
+    	public void allow(int policyReason) {
+	    	callbackContext.error("this should never happen; allow, policyReason: " + policyReason );
         }
 
+    	// this function is never called 
         public void dontAllow(int policyReason) {
-	    	callbackContext.error("do not allow: " + policyReason );
+	    	callbackContext.error("this should never happen; dontAllow, policyReason: " + policyReason );
         }
 
         public void applicationError(int errorCode) {
-	    	callbackContext.error("applicationError: " + errorCode );
+	    	callbackContext.error("applicationError, errorCode: " + errorCode );
         }
     }
 
