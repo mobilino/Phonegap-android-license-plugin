@@ -63,10 +63,7 @@ Alternatively this plugin can be installed using the Cordova/Phonegap CLI.
 
 
 ```sh
-
 cordova plugin add https://github.com/mobilino/Phonegap-android-license-plugin.git
-
-
 ```
 
 ## Additional Resources
