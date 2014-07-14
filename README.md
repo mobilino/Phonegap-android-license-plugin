@@ -31,7 +31,7 @@ AndroidLicensePlugin.check(
         );
 ```
 
-## return values
+## Return Values
 
 If the retrieval of the license information was successful the success callback will be called. Please note that a successful retrieval does NOT always mean that the app has a valid license! A List of LVL response codes can be found in [Googles LVL Library] (http://marketlicensing.googlecode.com/hg/library/src/com/android/vending/licensing/LicenseValidator.java). They are explains in [the Google docs] (http://developer.android.com/google/play/licensing/licensing-reference.html).
 ```js
