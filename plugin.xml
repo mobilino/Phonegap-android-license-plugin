@@ -20,7 +20,11 @@
                 <param name="android-package" value="de.mobilino.phonegap.AndroidLicensePlugin"/>
             </feature>
         </config-file>
-
+        
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
+        </config-file>
+        
         <source-file src="src/com/google/android/vending/licensing/AESObfuscator.java" target-dir="src/com/google/android/vending/licensing/" />      
         <source-file src="src/com/google/android/vending/licensing/APKExpansionPolicy.java" target-dir="src/com/google/android/vending/licensing/" />      
         <source-file src="src/com/google/android/vending/licensing/DeviceLimiter.java" target-dir="src/com/google/android/vending/licensing/" />      
