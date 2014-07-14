@@ -13,16 +13,15 @@ You can use the information retreved by this plugin to feed [this php license ve
 
 ### index.html
 
-Add js import after your cordova.js / phonegap.js
+Add js import after your cordova.js / phonegap.js import
 ```html
 <script type="text/javascript" src="AndroidLicensePlugin.js"></script>
 ```
 
 ### main.js
 
-In your onDeviceReady you may start the license check with the followring code:
+In your onDeviceReady you may start the license check with the followring code.
 
-Add js import after your cordova.js / phonegap.js
 ```js
 AndroidLicensePlugin.check(
         	function(data) {  alert( JSON.stringify(data));},
@@ -32,7 +31,7 @@ AndroidLicensePlugin.check(
 
 ## return values
 
-If the retevial of the licence information was successfull the success callback will be called. Please note that a successfull retevial does NOT always mean that the app has a valid licence!
+If the retevial of the licence information was successfull the success callback will be called. Please note that a successfull retevial does NOT always mean that the app has a valid licence! A List of LVL response codes can be found in [Googles LVL libaray] (http://marketlicensing.googlecode.com/hg/library/src/com/android/vending/licensing/LicenseValidator.java). They are explaind in [the google docs] (http://developer.android.com/google/play/licensing/licensing-reference.html)
 ```js
 data = {
 	responseCode: 0,
@@ -40,6 +39,7 @@ data = {
 	signature: "" // the BASE64 encoded signigere form google
 	} 
 ```
+
 if the retevial was not successfull the error callback will be called. This will happen in emulator, when the market app can not be reached, or there is not internet connection.
 
 ## Installation
