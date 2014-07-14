@@ -1,7 +1,13 @@
-Phonegap-android-licence-plugin
+Cordova Plugin to extract Android License Information
 ===============================
 
-android plugin to phonegap build for server based licence validation 
+Phonegap (build) plugin for android server based licence validation.
+
+This Plugin uses the Goole Play License Verification Libaray to requeset the paid apps licence information from the play store. You can use this infromation to send it to your server for license verification and only grand those users access whose license information is valid.
+
+Please see [this article] (http://android-developers.blogspot.de/2010/09/securing-android-lvl-applications.html) for why you should do that.
+
+You can use the information retreved by this plugin to feed [this php license verification libary] (https://code.google.com/p/android-market-license-verification/).
 
 ## Installation
 
@@ -11,6 +17,30 @@ Add js import after your cordova.js / phonegap.js
 ```html
 <script type="text/javascript" src="AndroidLicensePlugin.js"></script>
 ```
+
+### main.js
+
+In your onDeviceReady you may start the license check with the followring code:
+
+Add js import after your cordova.js / phonegap.js
+```js
+AndroidLicensePlugin.check(
+        	function(data) {  alert( JSON.stringify(data));},
+         	function(errorString) { alert("error: " + errorString);}
+         	);
+```
+
+## return values
+
+If the retevial of the licence information was successfull the success callback will be called. Please note that a successfull retevial does NOT always mean that the app has a valid licence!
+```js
+data = {
+	responseCode: 0,
+	signedData: "0|-123456798|de.mobilino....", // 6 fields of | delimert data
+	signature: "" // the BASE64 encoded signigere form google
+	} 
+```
+if the retevial was not successfull the error callback will be called. This will happen in emulator, when the market app can not be reached, or there is not internet connection.
 
 ## Installation
 This plugin is based on [plugman](https://github.com/apache/cordova-plugman). to install it to your app,
@@ -32,28 +62,20 @@ Alternatively this plugin can be installed using the Phonegap CLI.
 
 ```sh
 
-phonegap local plugin add https://github.com/phonegap-build/PushPlugin.git
+cordova plugin add https://github.com/mobilino/Phonegap-android-license-plugin.git
 
 
 ```
 
-For additional info, take a look at the [Plugman Documentation](https://github.com/apache/cordova-plugman/blob/master/README.md)
-
 ## Additional Resources
 
-[Local and Push Notification Programming Guide](http://developer.apple.com/library/mac/#documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/ApplePushService/ApplePushService.html) (Apple)
+[Securing Android LVL Applications](http://android-developers.blogspot.de/2010/09/securing-android-lvl-applications.html)
 
-[Google Cloud Messaging for Android](http://developer.android.com/guide/google/gcm/index.html) (Android)
-
-[Apple Push Notification Services Tutorial: Part 1/2](http://www.raywenderlich.com/3443/apple-push-notification-services-tutorial-part-12)
-
-[Apple Push Notification Services Tutorial: Part 2/2](http://www.raywenderlich.com/3525/apple-push-notification-services-tutorial-part-2)
-
-[How to Implement Push Notifications for Android](http://tokudu.com/2010/how-to-implement-push-notifications-for-android/)
+[Android Market License Verification in PHP] (https://code.google.com/p/android-market-license-verification/)
 
 ## Authors ##
 
-Andrew Lunny Fil Maj
+Christof Lange
 
 ## License ##
 
