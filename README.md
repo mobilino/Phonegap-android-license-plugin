@@ -37,7 +37,7 @@ If the retrieval of the license information was successful the success callback 
 ```js
 data = {
         responseCode: 0,
-        signedData: "0|-123456798|de.mobilino....", // 6 fields of | delimiter data
+        signedData: "0|-123456798|de.mobilino....", // 6 fields of | delimitered data
         signature: "" // the BASE64 encoded signature form Google
         } 
 ```
