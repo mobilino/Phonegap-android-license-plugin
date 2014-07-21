@@ -38,7 +38,7 @@ If the retrieval of the license information was successful the success callback 
 data = {
         responseCode: 0,
         signedData: "0|-123456798|de.mobilino....", // 6 fields of | delimitered data
-        signature: "" // the BASE64 encoded signature form Google
+        signature: "" // the BASE64 encoded signature from Google
         } 
 ```
 You can use signedData and signature to directly feed the mentioned php script.
