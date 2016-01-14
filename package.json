@@ -1,0 +1,26 @@
+{
+  "name": "de.mobilino.phonegap.AndroidLicensePlugin",
+  "version": "1.0.1",
+  "description": "android phonegap plugin for server based license checking",
+  "cordova": {
+    "id": "AndroidLicensePlugin",
+    "platforms": [
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mobilino/Phonegap-android-license-plugin"
+  },
+  "keywords": [
+    "cordova",
+    "android",
+    "ecosystem:cordova",
+    "cordova-android",
+    "Google Play License Verification Library",
+    "LVL",
+    "License Verification Library"
+  ],
+  "author": "Christof Lange",
+  "license": "MIT"
+}
