@@ -1,9 +1,9 @@
 {
-  "name": "de.mobilino.phonegap.AndroidLicensePlugin",
+  "name": "cordova-plugin-androidlicense",
   "version": "1.0.1",
-  "description": "android phonegap plugin for server based license checking",
+  "description": "android phonegap plugin for server based license checking (formerly AndroidLicensePlugin)",
   "cordova": {
-    "id": "AndroidLicensePlugin",
+    "id": "cordova-plugin-androidlicense",
     "platforms": [
       "android"
     ]
@@ -17,6 +17,7 @@
     "android",
     "ecosystem:cordova",
     "cordova-android",
+    "AndroidLicensePlugin",
     "Google Play License Verification Library",
     "LVL",
     "License Verification Library"
