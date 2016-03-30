@@ -16,17 +16,12 @@
 
 package com.google.android.vending.licensing;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.util.Log;
 
 /**
@@ -262,12 +257,17 @@ public class ServerManagedPolicy implements Policy {
     private Map<String, String> decodeExtras(String extras) {
         Map<String, String> results = new HashMap<String, String>();
         try {
-            URI rawExtras = new URI("?" + extras);
-            List<NameValuePair> extraList = URLEncodedUtils.parse(rawExtras, "UTF-8");
-            for (NameValuePair item : extraList) {
-                results.put(item.getName(), item.getValue());
+//        	http://stackoverflow.com/questions/32115018/lvl-library-and-android-marshmallow
+//            URI rawExtras = new URI("?" + extras);
+//            List<NameValuePair> extraList = URLEncodedUtils.parse(rawExtras, "UTF-8");
+//            for (NameValuePair item : extraList) {
+//                results.put(item.getName(), item.getValue());
+//            }
+            Uri uri = Uri.parse("?" + extras);
+            for (String itemName : uri.getQueryParameterNames()) {
+                results.put(itemName, uri.getQueryParameter(itemName));
             }
-        } catch (URISyntaxException e) {
+        } catch (RuntimeException e) {
           Log.w(TAG, "Invalid syntax error while decoding extras data from server.");
         }
         return results;

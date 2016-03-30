@@ -65,14 +65,13 @@ public class AndroidLicensePlugin extends CordovaPlugin {
             }
         }
         
-        // this function is never called 
         public void allow(int policyReason) {
-            callbackContext.error("this should never happen; allow, policyReason: " + policyReason );
+        	//should not be called. :-)
+            callbackContext.error("allow, policyReason: " + policyReason );
         }
 
-        // this function is never called 
         public void dontAllow(int policyReason) {
-            callbackContext.error("this should never happen; dontAllow, policyReason: " + policyReason );
+            callbackContext.error("dontAllow, policyReason: " + policyReason );
         }
 
         public void applicationError(int errorCode) {

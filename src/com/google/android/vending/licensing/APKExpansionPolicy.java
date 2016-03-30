@@ -17,20 +17,15 @@ package com.google.android.vending.licensing;
  * limitations under the License.
  */
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.util.Log;
 
 /**
  * Default policy. All policy decisions are based off of response data received
@@ -378,17 +373,27 @@ public class APKExpansionPolicy implements Policy {
     private Map<String, String> decodeExtras(String extras) {
         Map<String, String> results = new HashMap<String, String>();
         try {
-            URI rawExtras = new URI("?" + extras);
-            List<NameValuePair> extraList = URLEncodedUtils.parse(rawExtras, "UTF-8");
-            for (NameValuePair item : extraList) {
-                String name = item.getName();
-                int i = 0;
-                while (results.containsKey(name)) {
-                    name = item.getName() + ++i;
-                }
-                results.put(name, item.getValue());
+//        	http://stackoverflow.com/questions/32115018/lvl-library-and-android-marshmallow
+//          URI rawExtras = new URI("?" + extras);
+//          List<NameValuePair> extraList = URLEncodedUtils.parse(rawExtras, "UTF-8");
+//          for (NameValuePair item : extraList) {
+//              String name = item.getName();
+//		        int i = 0;
+//		        while (results.containsKey(name)) {
+//	                name = item.getName() + ++i;
+//	            }
+//	            results.put(name, item.getValue());
+//	        }
+        	Uri uri = Uri.parse("?" + extras);
+            for (String itemName : uri.getQueryParameterNames()) {
+            	String name = itemName;
+		        int i = 0;
+		        while (results.containsKey(name)) {
+	                name = itemName + ++i;
+	            }
+                results.put(name, uri.getQueryParameter(itemName));
             }
-        } catch (URISyntaxException e) {
+        } catch (RuntimeException e) {
             Log.w(TAG, "Invalid syntax error while decoding extras data from server.");
         }
         return results;
