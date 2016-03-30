@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-androidlicense",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "android phonegap plugin for server based license checking (formerly AndroidLicensePlugin)",
   "cordova": {
     "id": "cordova-plugin-androidlicense",

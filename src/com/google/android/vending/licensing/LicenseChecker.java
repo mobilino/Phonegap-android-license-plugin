@@ -16,8 +16,16 @@
 
 package com.google.android.vending.licensing;
 
-import com.google.android.vending.licensing.util.Base64;
-import com.google.android.vending.licensing.util.Base64DecoderException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -28,20 +36,12 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.provider.Settings.Secure;
 import android.util.Log;
 
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
+import com.google.android.vending.licensing.util.Base64;
+import com.google.android.vending.licensing.util.Base64DecoderException;
+
+import de.mobilino.phonegap.AndroidLicensePlugin.MyLicenseCheckerCallback;
 
 /**
  * Client library for Android Market license verifications.
@@ -67,7 +67,7 @@ public class LicenseChecker implements ServiceConnection {
 
     private ILicensingService mService;
 
-    private PublicKey mPublicKey;
+    private PublicKey mPublicKey = null;
     private final Context mContext;
     private final Policy mPolicy;
     /**
@@ -75,6 +75,7 @@ public class LicenseChecker implements ServiceConnection {
      * processing to block the UI thread.
      */
     private Handler mHandler;
+    private LicenseCheckerCallback mCallback; //new
     private final String mPackageName;
     private final String mVersionCode;
     private final Set<LicenseValidator> mChecksInProgress = new HashSet<LicenseValidator>();
@@ -89,7 +90,7 @@ public class LicenseChecker implements ServiceConnection {
     public LicenseChecker(Context context, Policy policy, String encodedPublicKey) {
         mContext = context;
         mPolicy = policy;
-        mPublicKey = generatePublicKey(encodedPublicKey);
+//        mPublicKey = generatePublicKey(encodedPublicKey);
         mPackageName = mContext.getPackageName();
         mVersionCode = getVersionCode(context, mPackageName);
         HandlerThread handlerThread = new HandlerThread("background thread");
@@ -134,26 +135,30 @@ public class LicenseChecker implements ServiceConnection {
      * @param callback
      */
     public synchronized void checkAccess(LicenseCheckerCallback callback) {
+    	mCallback = callback;
         // If we have a valid recent LICENSED response, we can skip asking
         // Market.
-        if (mPolicy.allowAccess()) {
-            Log.i(TAG, "Using cached license response");
-            callback.allow(Policy.LICENSED);
-        } else {
+//        if (mPolicy.allowAccess()) {
+//            Log.i(TAG, "Using cached license response");
+//            callback.allow(Policy.LICENSED);
+//        } else {
             LicenseValidator validator = new LicenseValidator(mPolicy, new NullDeviceLimiter(),
                     callback, generateNonce(), mPackageName, mVersionCode);
 
             if (mService == null) {
                 Log.i(TAG, "Binding to licensing service.");
                 try {
-                    boolean bindResult = mContext
-                            .bindService(
-                                    new Intent(
-                                            new String(
-                                                    Base64.decode("Y29tLmFuZHJvaWQudmVuZGluZy5saWNlbnNpbmcuSUxpY2Vuc2luZ1NlcnZpY2U="))),
-                                    this, // ServiceConnection.
-                                    Context.BIND_AUTO_CREATE);
+                    Intent serviceIntent = new Intent(
+						new String(Base64.decode("Y29tLmFuZHJvaWQudmVuZGluZy5saWNlbnNpbmcuSUxpY2Vuc2luZ1NlcnZpY2U=")));
+					serviceIntent.setPackage("com.android.vending");
 
+					boolean bindResult = mContext
+						.bindService(
+						serviceIntent,
+						this, // ServiceConnection.
+						Context.BIND_AUTO_CREATE
+					);
+					
                     if (bindResult) {
                         mPendingChecks.offer(validator);
                     } else {
@@ -169,7 +174,7 @@ public class LicenseChecker implements ServiceConnection {
                 mPendingChecks.offer(validator);
                 runChecks();
             }
-        }
+//        }
     }
 
     private void runChecks() {
@@ -219,47 +224,48 @@ public class LicenseChecker implements ServiceConnection {
         // either this or the timeout runs.
         public void verifyLicense(final int responseCode, final String signedData,
                 final String signature) {
-            mHandler.post(new Runnable() {
-                public void run() {
-                    Log.i(TAG, "Received response.");
-                    // Make sure it hasn't already timed out.
-                    if (mChecksInProgress.contains(mValidator)) {
-                        clearTimeout();
-                        mValidator.verify(mPublicKey, responseCode, signedData, signature);
-                        finishCheck(mValidator);
-                    }
-                    if (DEBUG_LICENSE_ERROR) {
-                        boolean logResponse;
-                        String stringError = null;
-                        switch (responseCode) {
-                            case ERROR_CONTACTING_SERVER:
-                                logResponse = true;
-                                stringError = "ERROR_CONTACTING_SERVER";
-                                break;
-                            case ERROR_INVALID_PACKAGE_NAME:
-                                logResponse = true;
-                                stringError = "ERROR_INVALID_PACKAGE_NAME";
-                                break;
-                            case ERROR_NON_MATCHING_UID:
-                                logResponse = true;
-                                stringError = "ERROR_NON_MATCHING_UID";
-                                break;
-                            default:
-                                logResponse = false;
-                        }
-
-                        if (logResponse) {
-                            String android_id = Secure.getString(mContext.getContentResolver(),
-                                    Secure.ANDROID_ID);
-                            Date date = new Date();
-                            Log.d(TAG, "Server Failure: " + stringError);
-                            Log.d(TAG, "Android ID: " + android_id);
-                            Log.d(TAG, "Time: " + date.toGMTString());
-                        }
-                    }
-
-                }
-            });
+        	((MyLicenseCheckerCallback) mCallback).rawData(responseCode, signedData, signature);
+//            mHandler.post(new Runnable() {
+//                public void run() {
+//                    Log.i(TAG, "Received response.");
+//                    // Make sure it hasn't already timed out.
+//                    if (mChecksInProgress.contains(mValidator)) {
+//                        clearTimeout();
+//                        mValidator.verify(mPublicKey, responseCode, signedData, signature);
+//                        finishCheck(mValidator);
+//                    }
+//                    if (DEBUG_LICENSE_ERROR) {
+//                        boolean logResponse;
+//                        String stringError = null;
+//                        switch (responseCode) {
+//                            case ERROR_CONTACTING_SERVER:
+//                                logResponse = true;
+//                                stringError = "ERROR_CONTACTING_SERVER";
+//                                break;
+//                            case ERROR_INVALID_PACKAGE_NAME:
+//                                logResponse = true;
+//                                stringError = "ERROR_INVALID_PACKAGE_NAME";
+//                                break;
+//                            case ERROR_NON_MATCHING_UID:
+//                                logResponse = true;
+//                                stringError = "ERROR_NON_MATCHING_UID";
+//                                break;
+//                            default:
+//                                logResponse = false;
+//                        }
+//
+//                        if (logResponse) {
+//                            String android_id = Secure.getString(mContext.getContentResolver(),
+//                                    Secure.ANDROID_ID);
+//                            Date date = new Date();
+//                            Log.d(TAG, "Server Failure: " + stringError);
+//                            Log.d(TAG, "Android ID: " + android_id);
+//                            Log.d(TAG, "Time: " + date.toGMTString());
+//                        }
+//                    }
+//
+//                }
+//            });
         }
 
         private void startTimeout() {
@@ -291,13 +297,13 @@ public class LicenseChecker implements ServiceConnection {
      * disconnections or timeouts.
      */
     private synchronized void handleServiceConnectionError(LicenseValidator validator) {
-        mPolicy.processServerResponse(Policy.RETRY, null);
-
-        if (mPolicy.allowAccess()) {
-            validator.getCallback().allow(Policy.RETRY);
-        } else {
+//        mPolicy.processServerResponse(Policy.RETRY, null);
+//
+//        if (mPolicy.allowAccess()) {
+//            validator.getCallback().allow(Policy.RETRY);
+//        } else {
             validator.getCallback().dontAllow(Policy.RETRY);
-        }
+//        }
     }
 
     /** Unbinds service if necessary and removes reference to it. */
