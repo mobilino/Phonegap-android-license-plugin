@@ -33,7 +33,7 @@ AndroidLicensePlugin.check(
 
 ## Return Values
 
-If the retrieval of the license information was successful the success callback will be called. Please note that a successful retrieval does NOT always mean that the app has a valid license! A List of LVL response codes can be found in [Googles LVL Library] (http://marketlicensing.googlecode.com/hg/library/src/com/android/vending/licensing/LicenseValidator.java). They are explains in [the Google docs] (http://developer.android.com/google/play/licensing/licensing-reference.html).
+If the retrieval of the license information was successful the success callback will be called. Please note that a successful retrieval does NOT always mean that the app has a valid license! A List of LVL response codes can be found in [Googles LVL Library] (https://android.googlesource.com/platform/development.git/+/b8168f27f6f5b6b0ced5ef3210c0e89e8d3a5ae2/samples/MarketLicensing/src/com/android/vending/licensing/LicenseValidator.java). They are explained in [the Google docs] (http://developer.android.com/google/play/licensing/licensing-reference.html).
 ```js
 data = {
         responseCode: 0,
@@ -44,7 +44,7 @@ data = {
 You can use signedData and signature to directly feed the mentioned php script.
 
 
-If the retrieval was not successful the error callback will be called. This will happen in emulator, when the market app can not be reached, or there is not internet connection. Usually this means that you what to retry the request after a certain amount of time.
+If the retrieval was not successful the error callback will be called. This will happen in emulator, when the market app can not be reached or there is not internet connection. Usually this means that you what to retry the request after a certain amount of time.
 
 ## Installation
 This plugin is based on [plugman](https://github.com/apache/cordova-plugman). To install it to your app,
