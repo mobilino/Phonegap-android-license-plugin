@@ -1,7 +1,7 @@
 Cordova Plugin to extract Android License Information
 ===============================
 
-As of 01/01/2021 this Plugin still works fine.
+As of 01/01/2021 this plugin still works fine.
 
 Phonegap (build) plugin for android server based license validation. Available on npm: https://www.npmjs.com/package/cordova-plugin-androidlicense
 
